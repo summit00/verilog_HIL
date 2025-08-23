@@ -1,0 +1,70 @@
+name: Verilog Unit and Application Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  simulate:
+    name: Run Verilog Testbenches
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Icarus Verilog
+        run: sudo apt-get install -y iverilog
+
+      - name: Run Library Unit Tests (sim/lib_tb)
+        run: |
+          echo "Running library unit tests..."
+          mkdir -p build
+          failed=0
+
+          for tb in $(find sim/lib_tb -type f -name 'tb_*.v'); do
+            name=$(basename "$tb" .v)
+            echo "Testing: $name"
+            iverilog -g2012 -I sim/common -o build/$name.out "$tb" source/lib/*.v
+            if [ $? -ne 0 ]; then
+              echo "Compilation failed: $name"
+              failed=1
+              continue
+            fi
+            vvp build/$name.out || failed=1
+            echo ""
+          done
+
+          if [ $failed -ne 0 ]; then
+            echo "Some library tests failed"
+            exit 1
+          else
+            echo "All library tests passed"
+          fi
+
+      - name: Run Application Simulations (sim/application_tb)
+        run: |
+          echo "Running application simulations..."
+          mkdir -p build
+          failed=0
+
+          for tb in $(find sim/application_tb -type f -name 'tb_*.v'); do
+            name=$(basename "$tb" .v)
+            echo "Testing: $name"
+            appFiles=$(find source/application -type f -name '*.v')
+            iverilog -g2012 -I sim/common -o build/$name.out "$tb" source/lib/*.v $appFiles
+            if [ $? -ne 0 ]; then
+              echo "Compilation failed: $name"
+              failed=1
+              continue
+            fi
+            vvp build/$name.out || failed=1
+            echo ""
+          done
+
+          if [ $failed -ne 0 ]; then
+            echo "Some application tests failed"
+            exit 1
+          else
+            echo "All application tests passed"
+          fi

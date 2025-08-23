@@ -1,0 +1,118 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run: Library Unit Tests (sim/lib_tb)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoLogo",
+        "-Command",
+        "mkdir build -Force; " +
+        "$failed = 0; " +
+        "Get-ChildItem -Recurse -Filter 'tb_*.v' -Path sim/lib_tb | ForEach-Object { " +
+        "  $name = $_.BaseName; " +
+        "  Write-Host '🔧 Testing:' $name; " +
+        "  iverilog -g2012 -I sim/common -o build/$name.out $_.FullName source/lib/*.v; " +
+        "  if ($LASTEXITCODE -ne 0) { Write-Host '`e[91m❌ Compilation failed:`e[0m' $name; $failed = 1 } else { " +
+        "    vvp build/$name.out; " +
+        "    if ($LASTEXITCODE -ne 0) { Write-Host '`e[91m❌ Simulation failed:`e[0m' $name; $failed = 1 } " +
+        "  }" +
+        "}; " +
+        "if ($failed -ne 0) { Write-Host '`e[91m❌ Some library tests failed`e[0m'; exit 1 } else { Write-Host '`e[92m✅ All library tests passed`e[0m' }"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      }
+    },
+    {
+      "label": "Run: Application Tests (sim/application_tb)",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoLogo",
+        "-Command",
+        "mkdir build -Force; " +
+        "$failed = 0; " +
+        "Get-ChildItem -Recurse -Filter 'tb_*.v' -Path sim/application_tb | ForEach-Object { " +
+        "  $name = $_.BaseName; " +
+        "  Write-Host '🔧 Testing:' $name; " +
+        "  $appFiles = Get-ChildItem -Recurse -Filter '*.v' -Path source/application | ForEach-Object { $_.FullName }; " +
+        "  iverilog -g2012 -I sim/common -o build/$name.out $_.FullName source/lib/*.v $appFiles; " +
+        "  if ($LASTEXITCODE -ne 0) { Write-Host '`e[91m❌ Compilation failed:`e[0m' $name; $failed = 1 } else { " +
+        "    vvp build/$name.out; " +
+        "    if ($LASTEXITCODE -ne 0) { Write-Host '`e[91m❌ Simulation failed:`e[0m' $name; $failed = 1 } " +
+        "  }" +
+        "}; " +
+        "if ($failed -ne 0) { Write-Host '`e[91m❌ Some application tests failed`e[0m'; exit 1 } else { Write-Host '`e[92m✅ All application tests passed`e[0m' }"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "echo": false,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      }
+    },
+    {
+      "label": "Open XXX in GTKWave",
+      "type": "shell",
+      "command": "gtkwave",
+      "args": [
+        "build/tb_pwm.vcd"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Clean build folder",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-NoLogo",
+        "-Command",
+        "Remove-Item -Recurse -Force build/*"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "problemMatcher": []
+    }
+  ]
+}

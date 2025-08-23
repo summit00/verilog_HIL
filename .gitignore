@@ -1,0 +1,33 @@
+# Quartus-generated folders
+db/
+incremental_db/
+output_files/
+simulation/
+
+# Project/Tool files
+*.bak
+*.rpt
+*.summary
+*.log
+*.sld
+*.pof
+*.sof
+*.jam
+*.jbc
+*.jic
+*.map
+*.pin
+*.asm
+*.done
+*.svf
+
+# Simulation output
+*.vcd
+*.wlf
+build/
+
+# Editor and OS junk
+*.swp
+*.tmp
+*.DS_Store
+*~
