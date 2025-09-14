@@ -31,3 +31,77 @@ build/
 *.tmp
 *.DS_Store
 *~
+
+# =============================================================================
+# Libero SoC / PolarFire / Microchip FPGA Git Ignore Template
+# =============================================================================
+
+# Ignore tool-generated folders
+designer/
+synthesis/
+simulation/
+export/
+stimulus/
+coverage/
+constraintmanager/
+component/
+coreconsole/
+designer_*/          # Sometimes creates per-implementation folders
+synthesis_*/         # Ditto
+
+# Ignore simulation and build artifacts
+*.vcd
+*.wlf
+*.sdf
+*.fsdb
+*.ucf
+*.lso
+*.xrf
+
+# Ignore reports and logs
+*.log
+*.rpt
+*.srr
+*.err
+*.xml
+*.html
+*.htm
+*.ps
+
+# Ignore programming and debug files
+*.stp
+*.bit
+*.jed
+*.pdb
+*.stapl
+*.svf
+*.jam
+*.jic
+*.pof
+*.sof
+
+# Ignore project database and internal config
+*.prjx
+*.prj
+*.vdb
+*.ini
+*.backup
+*.bak
+*.tcl.backup
+*.pdc.lock
+*.pdb
+
+# Ignore Libero cache
+*.libero*
+libero.cache/
+
+# IDE/editor/OS junk
+*.swp
+*.tmp
+*.DS_Store
+Thumbs.db
+*~
+
+# Backup files
+*.orig
+*.rej
